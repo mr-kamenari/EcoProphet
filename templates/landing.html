@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EcoProphet | Reduce Your Carbon Footprint</title>
+    <meta
+      name="description"
+      content="Use AI & Machine Learning to analyze CO2 emissions and get actionable recommendations to reduce your carbon footprint."
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #34d399;
+        --secondary-color: #3b82f6;
+        --dark-bg: #111827;
+        --darker-bg: #0f172a;
+        --text-color: #f3f4f6;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        background-color: var(--dark-bg);
+        color: var(--text-color);
+      }
+
+      .hero-section {
+        background-image: linear-gradient(
+            rgba(0, 0, 0, 0.6),
+            rgba(0, 0, 0, 0.8)
+          ),
+          url("/api/placeholder/1920/1080");
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+          circle at center,
+          rgba(52, 211, 153, 0.2) 0%,
+          rgba(15, 23, 42, 0) 70%
+        );
+        animation: pulse 8s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 0.3;
+        }
+        50% {
+          opacity: 0.7;
+        }
+        100% {
+          opacity: 0.3;
+        }
+      }
+
+      .glow-button {
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .glow-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 20px rgba(52, 211, 153, 0.6);
+      }
+
+      .glow-button:before {
+        content: "";
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        z-index: -1;
+        background: linear-gradient(
+          45deg,
+          var(--primary-color),
+          var(--secondary-color),
+          var(--primary-color)
+        );
+        background-size: 400%;
+        border-radius: 10px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .glow-button:hover:before {
+        opacity: 1;
+        animation: animate 3s linear infinite;
+      }
+
+      @keyframes animate {
+        0% {
+          background-position: 0 0;
+        }
+        50% {
+          background-position: 400% 0;
+        }
+        100% {
+          background-position: 0 0;
+        }
+      }
+
+      .step-card {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .step-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 25px rgba(52, 211, 153, 0.2);
+      }
+
+      .feature-card {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.6s ease;
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .feature-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .feature-card:hover {
+        border-color: var(--primary-color);
+        box-shadow: 0 5px 15px rgba(52, 211, 153, 0.2);
+      }
+
+      .testimonial-card {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .testimonial-card:hover {
+        transform: scale(1.02);
+      }
+
+      .cta-button {
+        position: relative;
+        animation: pulse-cta 2s infinite;
+      }
+
+      @keyframes pulse-cta {
+        0% {
+          box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 15px rgba(52, 211, 153, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(52, 211, 153, 0);
+        }
+      }
+
+      .footer {
+        background: rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(10px);
+      }
+
+      .social-icon {
+        transition: all 0.3s ease;
+      }
+
+      .social-icon:hover {
+        transform: translateY(-3px);
+        color: var(--primary-color);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav
+      class="fixed w-full z-50 bg-opacity-90 bg-gray-900 backdrop-filter backdrop-blur-lg border-b border-gray-800"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <a href="{{ url_for('landing') }}">
+                <span
+                  class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500"
+                  ><i class="fas fa-leaf mr-2 icon-pulse"></i>EcoProphet</span
+                >
+              </a>
+            </div>
+          </div>
+          <div class="hidden md:block">
+            <div class="ml-10 flex items-baseline space-x-4">
+              <a
+                href="#how-it-works"
+                class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition duration-300"
+                >How It Works</a
+              >
+              <a
+                href="#features"
+                class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition duration-300"
+                >Features</a
+              >
+              <a
+                href="#recommendations"
+                class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition duration-300"
+                >AI Recommendations</a
+              >
+            </div>
+          </div>
+          <div class="block">
+            <!-- Line 173 -->
+            <a
+              href="{{ url_for('login') }}"
+              class="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300"
+              >Sign In</a
+            >
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section min-h-screen flex items-center pt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
+        <h1 class="text-4xl md:text-6xl font-extrabold mb-6">
+          <span class="block">🌍 Predict & Reduce Your</span>
+          <span
+            class="bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500"
+            >Carbon Footprint</span
+          >
+        </h1>
+        <p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-10">
+          Use AI & Machine Learning to analyze CO2 emissions and get actionable
+          recommendations.
+        </p>
+        <a
+          href="{{ url_for('login') }}"
+          class="glow-button inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 focus:outline-none transition duration-300"
+        >
+          Start Calculating CO2
+          <svg
+            class="ml-2 -mr-1 w-5 h-5"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-20 bg-gray-900">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
+          <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+            Three simple steps to understand and reduce your carbon footprint
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Step 1 -->
+          <div class="step-card rounded-xl p-8 text-center">
+            <div
+              class="bg-gradient-to-r from-green-400 to-blue-500 rounded-full p-4 mx-auto w-20 h-20 flex items-center justify-center mb-6"
+            >
+              <i class="fas fa-car-side text-2xl text-white"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-4">Enter Your Vehicle Details</h3>
+            <p class="text-gray-400">
+              Provide information about your vehicle including make, model,
+              year, and usage patterns.
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step-card rounded-xl p-8 text-center">
+            <div
+              class="bg-gradient-to-r from-green-400 to-blue-500 rounded-full p-4 mx-auto w-20 h-20 flex items-center justify-center mb-6"
+            >
+              <i class="fas fa-brain text-2xl text-white"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-4">Get AI-Powered Predictions</h3>
+            <p class="text-gray-400">
+              Our advanced machine learning models analyze your data to
+              calculate accurate CO2 emissions.
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="step-card rounded-xl p-8 text-center">
+            <div
+              class="bg-gradient-to-r from-green-400 to-blue-500 rounded-full p-4 mx-auto w-20 h-20 flex items-center justify-center mb-6"
+            >
+              <i class="fas fa-leaf text-2xl text-white"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-4">
+              Receive Personalized Recommendations
+            </h3>
+            <p class="text-gray-400">
+              Get tailored suggestions to reduce your carbon footprint with
+              practical, achievable steps.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Features Section -->
+    <section id="features" class="py-20 bg-gray-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-bold mb-4">Key Features</h2>
+          <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+            Advanced capabilities powered by cutting-edge technology
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <!-- Feature 1 -->
+          <div class="feature-card rounded-xl p-6 h-full">
+            <div class="text-green-400 mb-4">
+              <i class="fas fa-calculator text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2">CO2 Calculator</h3>
+            <p class="text-gray-400">
+              Real-time calculations based on scientific emission factors and
+              your specific usage patterns.
+            </p>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="feature-card rounded-xl p-6 h-full">
+            <div class="text-blue-400 mb-4">
+              <i class="fas fa-robot text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2">AI-Generated Recommendations</h3>
+            <p class="text-gray-400">
+              Personalized suggestions tailored to your lifestyle and vehicle
+              usage to maximize impact.
+            </p>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="feature-card rounded-xl p-6 h-full">
+            <div class="text-green-400 mb-4">
+              <i class="fas fa-user-friends text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2">User-Friendly Interface</h3>
+            <p class="text-gray-400">
+              Intuitive design making it easy to input data and understand your
+              carbon footprint analysis.
+            </p>
+          </div>
+
+          <!-- Feature 4 -->
+          <div class="feature-card rounded-xl p-6 h-full">
+            <div class="text-blue-400 mb-4">
+              <i class="fas fa-mobile-alt text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2">Mobile Friendly</h3>
+            <p class="text-gray-400">
+              Access your carbon footprint data and recommendations anytime,
+              anywhere with our responsive mobile design.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- AI Recommendations Section -->
+<section id="recommendations" class="py-20 bg-gray-900 relative overflow-hidden">
+  <!-- Background decoration -->
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="data-particles"></div>
+  </div>
+  
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4 scroll-reveal">
+        <span class="bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">AI Recommendations</span>
+      </h2>
+      <p class="text-xl text-gray-400 max-w-3xl mx-auto scroll-reveal">
+        Smart, personalized suggestions to reduce your environmental impact
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Recommendation Card -->
+      <div class="testimonial-card rounded-xl p-6 scroll-reveal">
+        <div class="flex items-start mb-4">
+          <div class="flex-shrink-0 mr-4">
+            <div class="bg-gradient-to-r from-green-400 to-blue-500 rounded-full p-3 text-white">
+              <i class="fas fa-balance-scale text-xl"></i>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">Real-World Comparison</h3>
+            <p class="text-gray-400">
+              Our AI translates abstract carbon figures into meaningful equivalents. Compare your monthly emissions to trees needed, smartphone charges, or everyday items to truly understand your environmental impact.
+            </p>
+          </div>
+        </div>
+        <div class="ml-12 mt-4 p-3 bg-gray-800 rounded-lg border-l-4 border-green-400">
+          <p class="text-sm italic text-gray-300">
+            "Your monthly emissions of 432 kg CO₂ equal the carbon sequestered by 28 mature trees in one year. Small changes can make a significant difference."
+          </p>
+          <p class="text-xs text-gray-500 mt-2">— EcoProphet AI Analysis</p>
+        </div>
+      </div>
+
+      <!-- Recommendation Card -->
+      <div class="testimonial-card rounded-xl p-6 scroll-reveal" data-delay="200">
+        <div class="flex items-start mb-4">
+          <div class="flex-shrink-0 mr-4">
+            <div class="bg-gradient-to-r from-green-400 to-blue-500 rounded-full p-3 text-white">
+              <i class="fas fa-rupee-sign text-xl"></i>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">Carbon Offset Costs (₹ INR)</h3>
+            <p class="text-gray-400">
+              Receive precise calculations of what it would cost to offset your emissions through verified Indian carbon programs, with options from Maharashtra, Karnataka, and Tamil Nadu.
+            </p>
+          </div>
+        </div>
+        <div class="ml-12 mt-4 p-3 bg-gray-800 rounded-lg border-l-4 border-blue-400">
+          <p class="text-sm italic text-gray-300">
+            "To offset your annual emissions: ₹18,144 via tree planting in Maharashtra, ₹20,736 for solar projects in Karnataka, or ₹15,552 for wind farms in Tamil Nadu."
+          </p>
+          <p class="text-xs text-gray-500 mt-2">— EcoProphet AI Calculation</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+      <!-- Recommendation Card -->
+      <div class="testimonial-card rounded-xl p-6 scroll-reveal">
+        <div class="flex items-start mb-4">
+          <div class="flex-shrink-0 mr-4">
+            <div class="bg-gradient-to-r from-green-400 to-blue-500 rounded-full p-3 text-white">
+              <i class="fas fa-gas-pump text-xl"></i>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">Fuel Cost Estimation (₹ INR)</h3>
+            <p class="text-gray-400">
+              Get accurate projections of your current and future fuel expenses based on your specific vehicle data and driving patterns, with potential savings calculated.
+            </p>
+          </div>
+        </div>
+        <div class="ml-12 mt-4 p-3 bg-gray-800 rounded-lg border-l-4 border-green-400">
+          <p class="text-sm italic text-gray-300">
+            "Based on your Maruti Suzuki Swift: Current monthly fuel cost: ₹6,480. Projected annual cost: ₹77,760. Potential savings with recommended changes: ₹15,552 annually."
+          </p>
+          <p class="text-xs text-gray-500 mt-2">— EcoProphet AI Projection</p>
+        </div>
+      </div>
+
+      <!-- Recommendation Card -->
+      <div class="testimonial-card rounded-xl p-6 scroll-reveal" data-delay="200">
+        <div class="flex items-start mb-4">
+          <div class="flex-shrink-0 mr-4">
+            <div class="bg-gradient-to-r from-green-400 to-blue-500 rounded-full p-3 text-white">
+              <i class="fas fa-car text-xl"></i>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">Top 3 Driving Tips</h3>
+            <p class="text-gray-400">
+              Receive vehicle-specific recommendations calibrated to your driving habits. Our AI identifies the three most impactful changes you can make based on your specific model and usage.
+            </p>
+          </div>
+        </div>
+        <div class="ml-12 mt-4 p-3 bg-gray-800 rounded-lg border-l-4 border-blue-400">
+          <p class="text-sm italic text-gray-300">
+            "For your Hyundai Creta: 1) Maintain speed between 65-75 km/h on highways (8.2% reduction), 2) Reduce rapid acceleration after junctions (5.7% reduction), 3) Shift gears at 2000 RPM (4.3% reduction)."
+          </p>
+          <p class="text-xs text-gray-500 mt-2">— EcoProphet AI Recommendation</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Recommendation Card (Full Width) -->
+    <div class="testimonial-card rounded-xl p-6 mt-8 scroll-reveal">
+      <div class="flex items-start mb-4">
+        <div class="flex-shrink-0 mr-4">
+          <div class="bg-gradient-to-r from-green-400 to-blue-500 rounded-full p-3 text-white">
+            <i class="fas fa-exchange-alt text-xl"></i>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold mb-2">Recommended Alternatives</h3>
+          <p class="text-gray-400">
+            Explore comprehensive comparisons between your current vehicle and alternatives, including electric and hybrid options. Each recommendation includes emissions reduction potential, annual savings, and precise return on investment calculations.
+          </p>
+        </div>
+      </div>
+      <div class="ml-12 mt-4 p-3 bg-gray-800 rounded-lg border-l-4 border-purple-400">
+        <p class="text-sm italic text-gray-300">
+          "Replacing your Honda City with a Tata Nexon EV: 74% emissions reduction, ₹62,400 annual fuel savings, purchase cost difference: ₹650,000, ROI: 10.4 years, total 5-year savings: ₹312,000."
+        </p>
+        <p class="text-xs text-gray-500 mt-2">— EcoProphet AI Investment Analysis</p>
+      </div>
+    </div>
+    <!-- CTA Section -->
+    <div class="mt-16 text-center scroll-reveal">
+      <a href="{{ url_for('login') }}" class="cta-button inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 focus:outline-none transition duration-300">
+        Get Your Personalized Recommendations
+        <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+        </div>
+      </div>
+   </section>
+
+    <!-- Footer Section -->
+    <footer class="footer py-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <a href="{{ url_for('landing') }}" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500"
+              ><i class="fas fa-leaf mr-2"></i>EcoProphet</a
+            >
+            <script>
+              document.addEventListener('DOMContentLoaded', function() {
+                // Make feature cards visible immediately
+                document.querySelectorAll('.feature-card').forEach(function(card) {
+                  card.classList.add('visible');
+                });
+                
+                // Optional: Add scroll reveal animation if desired
+                if ('IntersectionObserver' in window) {
+                  const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                      if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                      }
+                    });
+                  }, {threshold: 0.1});
+                  
+                  document.querySelectorAll('.feature-card, .scroll-reveal').forEach(el => {
+                    observer.observe(el);
+                  });
+                } else {
+                  // Fallback for browsers without IntersectionObserver support
+                  document.querySelectorAll('.feature-card, .scroll-reveal').forEach(el => {
+                    el.classList.add('visible');
+                  });
+                }
+              });
+            </script>
+  </body>
+</html>

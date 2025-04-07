@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EcoProphet</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #34d399;
+        --secondary-color: #3b82f6;
+        --accent-color: #8b5cf6;
+        --dark-bg: #111827;
+        --darker-bg: #0f172a;
+        --text-color: #f3f4f6;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        background-color: var(--dark-bg);
+        color: var(--text-color);
+        overflow-x: hidden;
+        background-image: radial-gradient(
+          rgba(52, 211, 153, 0.07) 1px,
+          transparent 1px
+        );
+        background-size: 30px 30px;
+      }
+
+      .navbar {
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .calculator-container {
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        backdrop-filter: blur(16px);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .calculator-container:before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          rgba(52, 211, 153, 0.03) 0%,
+          transparent 50%
+        );
+        z-index: -1;
+        animation: pulse 20s infinite linear;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .calculator-container:hover {
+        transform: translateY(-8px) scale(1.01);
+        box-shadow: 0 20px 40px rgba(52, 211, 153, 0.2),
+          0 12px 20px rgba(59, 130, 246, 0.15);
+      }
+
+      .form-field {
+        background: rgba(52, 211, 153, 0.06);
+        border: 1px solid rgba(52, 211, 153, 0.15);
+        transition: all 0.3s ease;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-field:focus {
+        background: rgba(52, 211, 153, 0.1);
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.2),
+          inset 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .form-field:hover {
+        background: rgba(52, 211, 153, 0.09);
+        transform: translateX(3px);
+      }
+
+      .form-group {
+        transition: all 0.3s ease;
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      .form-group.animate {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .glow-button {
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .glow-button:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(52, 211, 153, 0.5),
+          0 6px 12px rgba(59, 130, 246, 0.4);
+        letter-spacing: 0.5px;
+      }
+
+      .glow-button:active {
+        transform: translateY(2px);
+      }
+
+      .glow-button:before {
+        content: "";
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        z-index: -1;
+        background: linear-gradient(
+          45deg,
+          var(--primary-color),
+          var(--secondary-color),
+          var(--accent-color),
+          var(--primary-color)
+        );
+        background-size: 400%;
+        border-radius: 10px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .glow-button:hover:before {
+        opacity: 1;
+        animation: animate 4s linear infinite;
+      }
+
+      .glow-button:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: 0.5s;
+      }
+
+      .glow-button:hover:after {
+        left: 100%;
+      }
+
+      .loader {
+        border: 3px solid rgba(52, 211, 153, 0.1);
+        border-radius: 50%;
+        border-top: 3px solid var(--primary-color);
+        border-left: 3px solid var(--secondary-color);
+        border-right: 3px solid var(--accent-color);
+        width: 35px;
+        height: 35px;
+        animation: spin 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+        margin: 20px auto;
+        display: none;
+        filter: drop-shadow(0 0 5px rgba(52, 211, 153, 0.5));
+      }
+
+      .particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+      }
+
+      .particle {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.4;
+        background: linear-gradient(
+          to right,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        animation: float 20s infinite linear;
+      }
+      @keyframes animate {
+        0% {
+          background-position: 0 0;
+        }
+        50% {
+          background-position: 400% 0;
+        }
+        100% {
+          background-position: 0 0;
+        }
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 0.4;
+        }
+        50% {
+          opacity: 0.2;
+        }
+        100% {
+          transform: translateY(-1000px) rotate(720deg);
+          opacity: 0;
+        }
+      }
+
+      @keyframes iconPulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .form-label {
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+      }
+
+      .form-label i {
+        margin-right: 8px;
+        color: var(--primary-color);
+      }
+
+      .section-title {
+        position: relative;
+        display: inline-block;
+      }
+
+      .section-title::before,
+      .section-title::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 30px;
+        height: 2px;
+        background: linear-gradient(90deg, var(--primary-color), transparent);
+      }
+
+      .section-title::before {
+        left: -40px;
+      }
+
+      .section-title::after {
+        right: -40px;
+        background: linear-gradient(90deg, transparent, var(--secondary-color));
+      }
+    </style>
+  </head>
+
+  <body class="min-h-screen bg-gray-900">
+    <!-- Particle Background -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar fixed w-full z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <a
+                href="{{ url_for('login') }}"
+                class="text-2xl font-bold brand-text bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-blue-500 to-purple-500"
+              >
+                <i class="fas fa-leaf mr-2 icon-pulse"></i>EcoProphet
+              </a>
+            </div>
+          </div>
+          <div>
+            <a
+              href="{{ url_for('logout') }}"
+              class="logout-btn px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-300"
+            >
+              <i class="fas fa-sign-out-alt mr-1"></i>Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Calculator Form Section -->
+    <div class="flex items-center justify-center pt-28 pb-16 px-4">
+      <div class="calculator-container rounded-xl p-8 max-w-lg w-full">
+        <h1 class="text-2xl font-extrabold mb-8 text-center">
+          <span
+            class="section-title bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-blue-500 to-purple-500"
+          >
+            <i class="fas fa-battery-three-quarters mr-2 animate-pulse"></i
+            >EcoProphet
+          </span>
+          <p class="text-lg font-normal text-gray-300 mt-2">
+            Intelligent CO2 Forecasting
+          </p>
+        </h1>
+
+        <form
+          id="co2Form"
+          action="{{ url_for('predict')}}"
+          method="post"
+          class="space-y-5"
+        >
+          <div class="form-group">
+            <label
+              class="block text-sm font-medium text-gray-300 mb-1 form-label"
+            >
+              <i class="fas fa-cogs"></i>Engine Size
+            </label>
+            <input
+              type="number"
+              name="Engine_Size"
+              step="any"
+              required
+              class="form-field w-full px-4 py-2 rounded-lg bg-opacity-20 text-white"
+            />
+          </div>
+
+          <div class="form-group">
+            <label
+              class="block text-sm font-medium text-gray-300 mb-1 form-label"
+            >
+              <i class="fas fa-circle-notch"></i>Cylinders
+            </label>
+            <input
+              type="number"
+              name="Cylinders"
+              step="any"
+              required
+              class="form-field w-full px-4 py-2 rounded-lg bg-opacity-20 text-white"
+            />
+          </div>
+
+          <div class="form-group">
+            <label
+              class="block text-sm font-medium text-gray-300 mb-1 form-label"
+            >
+              <i class="fas fa-city"></i>Fuel Consumption City (L/100 km)
+            </label>
+            <input
+              type="number"
+              name="Fuel_Consumption_City"
+              step="any"
+              required
+              class="form-field w-full px-4 py-2 rounded-lg bg-opacity-20 text-white"
+            />
+          </div>
+
+          <div class="form-group">
+            <label
+              class="block text-sm font-medium text-gray-300 mb-1 form-label"
+            >
+              <i class="fas fa-road"></i>Fuel Consumption Hwy (L/100 km)
+            </label>
+            <input
+              type="number"
+              name="Fuel_Consumption_Hwy"
+              step="any"
+              required
+              class="form-field w-full px-4 py-2 rounded-lg bg-opacity-20 text-white"
+            />
+          </div>
+
+          <div class="form-group">
+            <label
+              class="block text-sm font-medium text-gray-300 mb-1 form-label"
+            >
+              <i class="fas fa-gas-pump"></i>Fuel Consumption Comb (L/100 km)
+            </label>
+            <input
+              type="number"
+              name="Fuel_Consumption_Comb"
+              step="any"
+              required
+              class="form-field w-full px-4 py-2 rounded-lg bg-opacity-20 text-white"
+            />
+          </div>
+
+          <div class="form-group">
+            <label
+              class="block text-sm font-medium text-gray-300 mb-1 form-label"
+            >
+              <i class="fas fa-tachometer-alt"></i>Fuel Consumption Comb (mpg)
+            </label>
+            <input
+              type="number"
+              name="Fuel_Consumption_Comb_mpg"
+              step="any"
+              required
+              class="form-field w-full px-4 py-2 rounded-lg bg-opacity-20 text-white"
+            />
+          </div>
+
+          <div class="form-group">
+            <label
+              class="block text-sm font-medium text-gray-300 mb-1 form-label"
+            >
+              <i class="fas fa-fill-drip"></i>Fuel Type
+            </label>
+            <select
+              name="Fuel_Type"
+              required
+              class="form-field w-full px-4 py-2 rounded-lg bg-opacity-20 text-white"
+            >
+              <option value="Type_E">Ethanol Blended</option>
+              <option value="Type_X">Regular Petrol</option>
+              <option value="Type_Z">Premium Petrol</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label
+              class="block text-sm font-medium text-gray-300 mb-1 form-label"
+            >
+              <i class="fas fa-cog"></i>Transmission Type
+            </label>
+            <select
+              name="Transmission"
+              required
+              class="form-field w-full px-4 py-2 rounded-lg bg-opacity-20 text-white"
+            >
+              <option value="A4">A4</option>
+              <option value="A5">A5</option>
+              <option value="A6">A6</option>
+              <option value="A7">A7</option>
+              <option value="A8">A8</option>
+              <option value="A9">A9</option>
+              <option value="AM5">AM5</option>
+              <option value="AM6">AM6</option>
+              <option value="AM7">AM7</option>
+              <option value="AM8">AM8</option>
+              <option value="AM9">AM9</option>
+              <option value="AS4">AS4</option>
+              <option value="AS5">AS5</option>
+              <option value="AS6">AS6</option>
+              <option value="AS7">AS7</option>
+              <option value="AS8">AS8</option>
+              <option value="AS9">AS9</option>
+              <option value="AS10">AS10</option>
+              <option value="AV">AV</option>
+              <option value="AV6">AV6</option>
+              <option value="AV7">AV7</option>
+              <option value="AV8">AV8</option>
+              <option value="AV10">AV10</option>
+              <option value="M5">M5</option>
+              <option value="M6">M6</option>
+              <option value="M7">M7</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label
+              class="block text-sm font-medium text-gray-300 mb-1 form-label"
+            >
+              <i class="fas fa-car"></i>Make
+            </label>
+            <select
+              name="Make"
+              required
+              class="form-field w-full px-4 py-2 rounded-lg bg-opacity-20 text-white"
+            >
+              <option value="Luxury">Luxury</option>
+              <option value="Premium">Premium</option>
+              <option value="Sports">Sports</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label
+              class="block text-sm font-medium text-gray-300 mb-1 form-label"
+            >
+              <i class="fas fa-truck-monster"></i>Vehicle Class
+            </label>
+            <select
+              name="Vehicle_Class"
+              required
+              class="form-field w-full px-4 py-2 rounded-lg bg-opacity-20 text-white"
+            >
+              <option value="SUV">SUV</option>
+              <option value="Sedan">Sedan</option>
+              <option value="Truck">Truck</option>
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            class="glow-button mt-6 w-full px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 focus:outline-none transition duration-300"
+          >
+            <i class="fas fa-rocket mr-2"></i> Calculate CO2
+          </button>
+
+          <!-- Loading Indicator -->
+          <div class="loader" id="loadingSpinner"></div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Create particle elements
+      document.addEventListener("DOMContentLoaded", function () {
+        const particlesContainer = document.getElementById("particles");
+        const particleCount = 20;
+
+        for (let i = 0; i < particleCount; i++) {
+          const size = Math.random() * 8 + 2;
+          const particle = document.createElement("div");
+          particle.className = "particle";
+          particle.style.width = `${size}px`;
+          particle.style.height = `${size}px`;
+          particle.style.left = `${Math.random() * 100}vw`;
+          particle.style.top = `${Math.random() * 100}vh`;
+          particle.style.animationDuration = `${Math.random() * 30 + 10}s`;
+          particle.style.animationDelay = `${Math.random() * 5}s`;
+          particlesContainer.appendChild(particle);
+        }
+
+        // Animate form groups sequentially
+        const formGroups = document.querySelectorAll(".form-group");
+        formGroups.forEach((group, index) => {
+          setTimeout(() => {
+            group.classList.add("animate");
+          }, 100 * (index + 1));
+        });
+      });
+
+      // Form submission and loading animation
+      document
+        .getElementById("co2Form")
+        .addEventListener("submit", function () {
+          document.getElementById("loadingSpinner").style.display = "block";
+        });
+    </script>
+  </body>
+</html>

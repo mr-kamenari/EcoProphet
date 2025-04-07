@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CO2 Emission Analysis Results | EcoProphet</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #34d399;
+        --secondary-color: #3b82f6;
+        --dark-bg: #111827;
+        --darker-bg: #0f172a;
+        --text-color: #f3f4f6;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        background-color: var(--dark-bg);
+        color: var(--text-color);
+        background-image: radial-gradient(
+            circle at 90% 10%,
+            rgba(59, 130, 246, 0.1) 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            circle at 10% 90%,
+            rgba(52, 211, 153, 0.1) 0%,
+            transparent 60%
+          );
+        background-attachment: fixed;
+        margin: 0;
+        padding: 0;
+      }
+
+      .navbar {
+        background: rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+      }
+
+      .results-container {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px);
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        max-width: 600px;
+        margin: 120px auto;
+        padding: 30px;
+        border-radius: 12px;
+        text-align: center;
+      }
+
+      .results-container:hover {
+        transform: scale(1.02);
+        box-shadow: 0 10px 30px rgba(52, 211, 153, 0.2);
+      }
+
+      .prediction-box {
+        font-size: 22px;
+        font-weight: bold;
+        background: rgba(52, 211, 153, 0.1);
+        padding: 15px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 1px solid rgba(52, 211, 153, 0.2);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .prediction-box::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          to right,
+          rgba(52, 211, 153, 0),
+          rgba(52, 211, 153, 0.1),
+          rgba(52, 211, 153, 0)
+        );
+        transform: rotate(45deg);
+        animation: shimmer 3s infinite;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      @keyframes shimmer {
+        0% {
+          transform: translateX(-100%) rotate(45deg);
+        }
+        100% {
+          transform: translateX(100%) rotate(45deg);
+        }
+      }
+
+      .recommendations {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+        text-align: left;
+        position: relative;
+      }
+
+      .recommendations::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(
+          to right,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        border-radius: 0 0 8px 8px;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.5s ease;
+      }
+
+      .recommendations:hover::after {
+        transform: scaleX(1);
+      }
+
+      .back-btn {
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        display: block;
+        margin-top: 20px;
+        padding: 12px;
+        background: linear-gradient(
+          to right,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        border: none;
+        color: white;
+        font-weight: bold;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 20px rgba(52, 211, 153, 0.6);
+      }
+
+      .back-btn:before {
+        content: "";
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        z-index: -1;
+        background: linear-gradient(
+          45deg,
+          var(--primary-color),
+          var(--secondary-color),
+          var(--primary-color)
+        );
+        background-size: 400%;
+        border-radius: 10px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .back-btn:hover:before {
+        opacity: 1;
+        animation: animate 3s linear infinite;
+      }
+
+      @keyframes animate {
+        0% {
+          background-position: 0 0;
+        }
+        50% {
+          background-position: 400% 0;
+        }
+        100% {
+          background-position: 0 0;
+        }
+      }
+
+      #loading {
+        text-align: center;
+        padding: 50px;
+        display: none;
+      }
+
+      .spinner {
+        border: 5px solid rgba(255, 255, 255, 0.1);
+        border-top: 5px solid var(--primary-color);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px auto;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .co2-graphic {
+        transition: all 0.5s ease;
+        box-shadow: 0 0 15px rgba(52, 211, 153, 0.3);
+        margin: 0 auto;
+      }
+
+      .co2-graphic:hover {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 0 20px rgba(52, 211, 153, 0.5);
+      }
+
+      h1 {
+        color: #fff;
+        margin-bottom: 20px;
+      }
+
+      h2,
+      h3 {
+        color: #fff;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        background: rgba(15, 23, 42, 0.8);
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      th {
+        background: rgba(52, 211, 153, 0.1);
+        font-weight: bold;
+      }
+
+      tr:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      /* Particle background */
+      .particles-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        pointer-events: none;
+      }
+
+      .particle {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.3;
+        animation: float 10s infinite ease-in-out;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-20px) rotate(180deg);
+        }
+        100% {
+          transform: translateY(0px) rotate(360deg);
+        }
+      }
+
+      /* Eco Icon Animations */
+      .eco-icon {
+        display: inline-block;
+        margin-right: 5px;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* Decorative elements */
+      .corner-decoration {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border-style: solid;
+        border-color: var(--primary-color);
+        opacity: 0.5;
+        z-index: 1;
+      }
+
+      .corner-decoration.top-left {
+        top: -5px;
+        left: -5px;
+        border-width: 3px 0 0 3px;
+        border-radius: 10px 0 0 0;
+      }
+
+      .corner-decoration.top-right {
+        top: -5px;
+        right: -5px;
+        border-width: 3px 3px 0 0;
+        border-radius: 0 10px 0 0;
+      }
+
+      .corner-decoration.bottom-left {
+        bottom: -5px;
+        left: -5px;
+        border-width: 0 0 3px 3px;
+        border-radius: 0 0 0 10px;
+      }
+
+      .corner-decoration.bottom-right {
+        bottom: -5px;
+        right: -5px;
+        border-width: 0 3px 3px 0;
+        border-radius: 0 0 10px 0;
+      }
+
+      /* Progress bar styles */
+      .progress-container {
+        width: 100%;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 10px 0;
+      }
+
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(
+          to right,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        border-radius: 4px;
+        transition: width 1s ease;
+      }
+
+      /* Animated leaf background */
+      .animated-leaf {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%2334d399' d='M64 96H0c0 123.7 100.3 224 224 224v144c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V320C288 196.3 187.7 96 64 96zm384-64c-84.2 0-157.4 46.5-195.7 115.2 27.7 30.2 48.2 66.9 59 107.6C424 243.1 512 147.9 512 32h-64z'/%3E%3C/svg%3E");
+        background-size: contain;
+        background-repeat: no-repeat;
+        opacity: 0.2;
+        pointer-events: none;
+        z-index: -1;
+      }
+      .leaf-position-1 {
+        top: 20%;
+        left: 10%;
+      }
+      .cta-button {
+        position: relative;
+        overflow: hidden;
+        transform: translateY(0);
+        box-shadow: 0 4px 15px rgba(52, 211, 153, 0.2);
+        animation: pulse 2s infinite;
+      }
+
+      .cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(52, 211, 153, 0.4);
+      }
+      .cta-button::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: 0.5s;
+      }
+      .cta-button:hover::before {
+        left: 100%;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col bg-gray-900">
+    <!-- Background Decoration -->
+    <div class="fixed inset-0 z-0 overflow-hidden">
+      <div
+        class="absolute top-0 right-0 w-96 h-96 bg-gradient-to-b from-blue-500 to-transparent rounded-full filter blur-3xl opacity-10 transform translate-x-1/3 -translate-y-1/3"
+      ></div>
+      <div
+        class="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-t from-green-500 to-transparent rounded-full filter blur-3xl opacity-10 transform -translate-x-1/3 translate-y-1/3"
+      ></div>
+    </div>
+
+    <div class="animated-leaf leaf-position-1"></div>
+    <div class="particles-container" id="particles-container"></div>
+
+    <!-- Animated Leaf Background -->
+    <div class="animated-leaf" style="top: 20%; left: 10%"></div>
+    <div class="animated-leaf" style="top: 35%; left: 85%"></div>
+    <div class="animated-leaf" style="top: 65%; left: 15%"></div>
+    <div class="animated-leaf" style="top: 80%; left: 75%"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar fixed w-full z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <a
+                href="{{ url_for('login') }}"
+                class="text-2xl font-bold brand-text bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-blue-500 to-purple-500"
+              >
+                <i class="fas fa-leaf mr-2 icon-pulse"></i>EcoProphet
+              </a>
+            </div>
+          </div>
+          <div>
+            <a
+              href="{{ url_for('logout') }}"
+              class="logout-btn px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-300"
+            >
+              <i class="fas fa-sign-out-alt mr-1"></i>Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Results Section -->
+    <div class="results-container z-10 animate__animated animate__fadeIn">
+      <!-- Decorative corners -->
+      <div class="corner-decoration top-left"></div>
+      <div class="corner-decoration top-right"></div>
+      <div class="corner-decoration bottom-left"></div>
+      <div class="corner-decoration bottom-right"></div>
+
+      <div class="flex flex-col items-center justify-center mb-6">
+        <h1
+          class="text-2xl font-extrabold mb-2 text-center animate__animated animate__fadeInDown"
+        >
+          <span
+            class="bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500"
+          >
+            CO2 Prediction Results
+          </span>
+        </h1>
+      </div>
+
+      <div id="loading">
+        <div class="spinner"></div>
+        <p>Generating CO2 emission analysis...</p>
+      </div>
+
+      <!-- Predicted CO2 Output -->
+      <div class="prediction-box animate__animated animate__fadeInLeft">
+        <h2>{{ prediction_text }}</h2>
+
+        <!-- Visual progress indicator -->
+        <div class="progress-container mt-3">
+          <div class="progress-bar" id="emission-level" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- AI Recommendations -->
+      <div class="recommendations animate__animated animate__fadeInRight">
+        <h3 class="text-lg font-semibold mb-3">
+          <i class="fas fa-robot mr-2 eco-icon"></i>AI Recommendations:
+        </h3>
+        <div id="recommendations-content">
+          {{ recommendations_text | safe }}
+        </div>
+      </div>
+
+      <!-- Back to Calculator Button -->
+
+      <div class="mt-16 text-center scroll-reveal">
+        <a
+          href="{{ url_for('calculator') }}"
+          class="cta-button inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-lg text-white bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 focus:outline-none transition duration-300"
+        >
+          <i class="fas fa-calculator mr-2"></i>
+          Back to Calculator
+          <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Show loading initially
+        document.getElementById("loading").style.display = "block";
+
+        // Once content is loaded, hide loading
+        if (
+          document.getElementById("recommendations-content").innerHTML.trim()
+        ) {
+          document.getElementById("loading").style.display = "none";
+
+          // Simulate progress bar fill animation based on CO2 value
+          setTimeout(function () {
+            const predictionText =
+              document.querySelector(".prediction-box h2").textContent;
+            let co2Value = 0;
+
+            // Try to extract a number from the prediction text
+            const matches = predictionText.match(/\d+(\.\d+)?/);
+            if (matches) {
+              co2Value = parseFloat(matches[0]);
+            }
+
+            // Calculate a reasonable percentage (assuming 300g/km is 100%)
+            let percentage = Math.min((co2Value / 300) * 100, 100);
+            // Ensure we have at least 10% filled for visibility
+            percentage = Math.max(percentage, 10);
+
+            // Set the width
+            document.getElementById("emission-level").style.width =
+              percentage + "%";
+          }, 500);
+
+          // Create floating particles
+          createParticles();
+        }
+      });
+
+      // Create floating eco particles
+      function createParticles() {
+        const container = document.getElementById("particles-container");
+        const particleCount = 15;
+
+        for (let i = 0; i < particleCount; i++) {
+          const particle = document.createElement("div");
+          particle.className = "particle";
+
+          // Random positioning
+          const size = Math.random() * 10 + 5;
+          particle.style.width = size + "px";
+          particle.style.height = size + "px";
+          particle.style.left = Math.random() * 100 + "%";
+          particle.style.top = Math.random() * 100 + "%";
+
+          // Random colors (eco theme)
+          const colors = [
+            "#34d399",
+            "#3b82f6",
+            "#34d399",
+            "#10b981",
+            "#3b82f6",
+          ];
+          const randomColor = colors[Math.floor(Math.random() * colors.length)];
+          particle.style.backgroundColor = randomColor;
+
+          // Random animation duration and delay
+          const duration = Math.random() * 20 + 10;
+          const delay = Math.random() * 10;
+          particle.style.animationDuration = duration + "s";
+          particle.style.animationDelay = delay + "s";
+
+          container.appendChild(particle);
+        }
+
+        // Animate leaves
+        const leaves = document.querySelectorAll(".animated-leaf");
+        leaves.forEach((leaf, index) => {
+          leaf.style.animationDuration = 15 + index * 2 + "s";
+          leaf.style.animationDelay = index * 1.5 + "s";
+          leaf.style.animation =
+            "float " + (15 + index * 2) + "s infinite ease-in-out";
+        });
+      }
+    </script>
+  </body>
+</html>
