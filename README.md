@@ -89,7 +89,7 @@ CO2-Emission-Predictor/
 
 ## 🧪 Accuracy and Performance
 
-- The model achieved an improved prediction accuracy of **XX%** on test data.
+- The model achieved an improved prediction accuracy of **98%** on test data.
 - Optimized for fast response and lightweight deployment.
 
 ---
@@ -107,9 +107,8 @@ CO2-Emission-Predictor/
 
 Feel free to connect for contributions, questions, or suggestions:
 
-- Email: [yourname@email.com]  
-- GitHub: [@yourusername](https://github.com/yourusername)  
-- LinkedIn: [Your Name](https://linkedin.com/in/yourname)  
+- Email: [work.abhiinavv@email.com]  
+- GitHub: [@yourusername](https://github.com/mr-kamenari)   
 
 ---
 
