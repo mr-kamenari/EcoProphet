@@ -1,5 +1,5 @@
 
-# 🌍 CO2 Emission Predictor using Machine Learning
+# 🌍 EcoProphet : Intelligent CO2 Forecasting
 
 This project is a machine learning-based web application that predicts **CO2 emissions** based on user inputs such as engine size, fuel type, and other relevant vehicle or industrial parameters. It also provides AI-generated recommendations to help reduce emissions.
 
