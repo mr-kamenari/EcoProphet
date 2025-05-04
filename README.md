@@ -107,7 +107,7 @@ CO2-Emission-Predictor/
 
 Feel free to connect for contributions, questions, or suggestions:
 
-- Email: [work.abhiinavv@email.com]  
+- Email: [work.abhiinavv@gmail.com]  
 - GitHub: [@mr-kamenari](https://github.com/mr-kamenari)   
 
 ---
