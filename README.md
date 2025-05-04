@@ -21,7 +21,7 @@ This project is a machine learning-based web application that predicts **CO2 emi
 - **Machine Learning:** Scikit-Learn, NumPy, Pandas  
 - **Frontend:** HTML5, CSS3  
 - **AI Integration:** Gemini API (for eco-friendly suggestions)  
-- **Tools:** Postman, Jupyter Notebook, VS Code  
+- **Tools:** Jupyter Notebook, VS Code  
 
 ---
 
